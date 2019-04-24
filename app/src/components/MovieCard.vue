@@ -1,7 +1,7 @@
 <template>
     <div class="movie-card">
         <div class="card h-100">
-            <img :src="'http://image.tmdb.org/t/p/w300'+movie.poster_path" class="card-img-top" alt="...">
+            <img :src="poster" class="card-img-top" alt="Poster">
             <div class="card-body">
                 <h5 class="card-title">{{ movie.title }}</h5>
                 <p class="card-text" v-if="genres.length">
@@ -36,6 +36,15 @@ export default {
         genres: {
             type: Array,
             default: () => []
+        }
+    },
+
+    computed: {
+        poster() {
+            if(!this.movie.poster_path) {
+                return require("../assets/no-image.jpg")
+            }
+            return 'http://image.tmdb.org/t/p/w300'+this.movie.poster_path
         }
     }
 }

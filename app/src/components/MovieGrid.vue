@@ -3,7 +3,7 @@
 
         <MovieCard v-for="(movie, index) in movies"  :key="index" 
             :movie="movie" 
-            :genres="genres"
+            :genres="getMovieGenres(movie)"
             class="col-6 col-sm-4 col-lg-3 mb-3"
         >
         </MovieCard>
@@ -24,6 +24,13 @@ export default {
         genres: {
             type: Array,
             default: () => []
+        }
+    },
+    methods: {
+        getMovieGenres(movie) {
+            return this.genres.filter(genre => {
+                return movie.genre_ids.indexOf(genre.id) != -1
+            })
         }
     }
 }

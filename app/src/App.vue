@@ -1,12 +1,20 @@
 <template>
     <div id="app" class="bg-secondary"> 
         
-        <NavBar></NavBar>
+        <NavBar @newSearch="searchText = $event" ></NavBar>
         
         <div class="container-fluid bg-light"> 
             
             <MovieGrid :movies="movies" :genres="genres" class="pt-3"></MovieGrid>
             
+            <div class="row" v-show="!movies.length && !loadingMovies">
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        Nenhum filme encontrado
+                    </div>
+                </div>
+            </div>
+
             <div class="row" v-show="loadingMovies">
                 <div class="col">
                     <div class="alert alert-success" role="alert">
@@ -14,7 +22,7 @@
                     </div>
                 </div>
             </div>
-
+            
         </div>
 
     </div>
@@ -44,14 +52,23 @@ export default {
             genres: [],
             total_results: 0,
             next_page: 1,
-            loadingMovies: false
+            loadingMovies: false,
+            searchText: ''
+        }
+    },
+
+    watch: {
+        searchText() {
+            this.next_page = 1
+            this.movies = []
+            this.loadMovies(1)
         }
     },
 
     methods:{
         scroll() {
             window.onscroll = () => {
-                let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight - 1;
                 if (bottomOfWindow) {
                     this.loadMovies(this.next_page)           
                 }
@@ -59,18 +76,15 @@ export default {
         },
 
         loadMovies(page) {
-            if (this.movies.length >= this.total_results && this.next_page > 1) {
+            if ((this.movies.length >= this.total_results && this.next_page > 1) || this.loadingMovies) {
                 return
             }
-            this.loadingMovies = true
-            let url = 'discover/movie?api_key='+API_KEY+'&language=pt-BR&primary_release_date.gte=2019-04-23&page='+page
-            this.$http.get(url)
-                .then(res => {
-                    this.movies = this.movies.concat(res.data.results)
-                    this.total_results = res.data.total_results
-                    this.next_page++
-                    this.loadingMovies = false
-                })
+
+            if (this.searchText) {
+                this.searchMovies(this.searchText, page)
+            } else {
+                this.newMovies(page)
+            }
         },
         
         loadGenres() {
@@ -78,6 +92,45 @@ export default {
             this.$http.get(url)
                 .then(res => {
                    this.genres = res.data.genres
+                })
+        },
+
+        newMovies(page) {
+            this.loadingMovies = true
+            let url = 'discover/movie'
+            let params = {
+                api_key: API_KEY,
+                language: 'pt-BR',
+                "primary_release_date.gte": '2019-04-24',
+                page: page
+            }
+
+            this.$http.get(url, {params})
+                .then(res => {
+                    this.movies = this.movies.concat(res.data.results)
+                    this.total_results = res.data.total_results
+                    this.next_page++
+                    this.loadingMovies = false
+                })
+        },
+
+         searchMovies(searchText, page) {
+            this.loadingMovies = true
+            let url = 'search/movie'
+            let params = {
+                api_key: API_KEY,
+                language: "pt-BR",
+                query: searchText,
+                primary_release_year: 2019,
+                page: page
+            }
+
+            this.$http.get(url, {params})
+                .then(res => {
+                    this.movies = this.movies.concat(res.data.results)
+                    this.total_results = res.data.total_results
+                    this.next_page++
+                    this.loadingMovies = false
                 })
         }
     }

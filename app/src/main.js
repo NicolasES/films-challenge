@@ -20,6 +20,11 @@ Vue.use({
 // MOMENT
 Vue.use(require('vue-moment'));
 
+//LODASH
+import VueLodash from 'vue-lodash'
+// const options = { name: 'lodash' } 
+Vue.use(VueLodash)
+
 
 Vue.config.productionTip = false
 

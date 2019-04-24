@@ -1,16 +1,34 @@
 <template>
     <nav class="navbar navbar-dark bg-info sticky-top">
-        <span class="navbar-brand mb-0 h1">Próximos lançamentos</span>
-        <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" placeholder="Nome do filme" aria-label="Search">
-            <button class="btn btn-light my-2 my-sm-0" type="submit">Buscar</button>
-        </form>
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Próximos lançamentos</span>
+            <form class="form-inline">
+                <input v-model="search" class="form-control mr-sm-2" type="search" placeholder="Buscar filme" aria-label="Search">
+            </form>
+        </div>
     </nav>
 </template>
 
 <script>
 export default {
-
+    data() {
+        return {
+            search: ''
+        }
+    },
+    watch: {
+        search(){
+            this.debouncedGetSearch()
+        }
+    },
+    created: function () {
+        this.debouncedGetSearch = this._.debounce(this.getSearch, 500)
+    },
+    methods: {
+        getSearch() {
+            this.$emit('newSearch', this.search)
+        }
+    }
 }
 </script>
 
