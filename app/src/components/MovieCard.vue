@@ -20,7 +20,7 @@
                     Data de lançamento:<br/>
                     <small class="text-muted">{{ movie.release_date | moment("DD/MM/YYYY") }}</small>
                 </p>
-                <a href="#" class="btn btn-info btn-sm">Detalhes</a>
+                <button @click="$emit('movieInfoClick',{movie, genres})" class="btn btn-info btn-sm">Detalhes</button>
             </div>
         </div>
     </div>

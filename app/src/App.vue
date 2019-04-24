@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="bg-secondary"> 
-        
+
         <NavBar @newSearch="searchText = $event" ></NavBar>
         
         <div class="container-fluid bg-light"> 
@@ -18,6 +18,9 @@
             <div class="row" v-show="loadingMovies">
                 <div class="col">
                     <div class="alert alert-success" role="alert">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
                         Carregando filmes...
                     </div>
                 </div>
@@ -43,7 +46,8 @@ export default {
     created(){
         this.loadGenres()
         this.loadMovies(1)
-        this.scroll()
+        this.scroll(),
+        this.$emit('bv::show::modal-movie-info')
     },
 
     data() {
@@ -101,7 +105,7 @@ export default {
             let params = {
                 api_key: API_KEY,
                 language: 'pt-BR',
-                "primary_release_date.gte": '2019-04-24',
+                "primary_release_date.gte": new Date().toJSON().slice(0,10),
                 page: page
             }
 
@@ -121,7 +125,7 @@ export default {
                 api_key: API_KEY,
                 language: "pt-BR",
                 query: searchText,
-                primary_release_year: 2019,
+                primary_release_year: new Date().getFullYear(),
                 page: page
             }
 
@@ -138,9 +142,6 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
 
 .container-fluid {
     max-width: 1250px;

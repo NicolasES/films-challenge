@@ -22,7 +22,6 @@ Vue.use(require('vue-moment'));
 
 //LODASH
 import VueLodash from 'vue-lodash'
-// const options = { name: 'lodash' } 
 Vue.use(VueLodash)
 
 
